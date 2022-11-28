@@ -1,8 +1,12 @@
 {
   "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "got": "^12.5.2",
     "jsdom": "^20.0.2",
-    "node": "^19.0.1"
+    "node": "^19.0.1",
+    "nodemon": "^2.0.20"
   },
   "name": "nodejs-backend",
   "version": "1.0.0",
@@ -14,5 +18,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elisgitpage/solar-analyzer-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elisgitpage/solar-analyzer-backend/issues"
+  },
+  "homepage": "https://github.com/elisgitpage/solar-analyzer-backend#readme",
   "description": ""
 }

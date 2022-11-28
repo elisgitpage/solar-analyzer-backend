@@ -2,7 +2,38 @@
 import got from "got";
 import jsdom from "jsdom";
 import { exec } from "child_process";
+import express from "express";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import cors from "cors";
 const { JSDOM } = jsdom;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+let app = express();
+
+console.log(__dirname);
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+
+// Route that responds to GET requests with our html page
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
+// This sends JSON in response to a GET request at /api
+app.get("/api", (req, res) => {
+  res.json({ msg: "Hello, from the server!" });
+});
+
+// Sets the app to listen on Port 4001 and lets us know
+app.listen(4001, () => {
+  console.log("Server listening on Port 4001.");
+});
 
 const solargisUrl = "https://solargis.com/maps-and-gis-data/overview";
 let allOptions = [];
