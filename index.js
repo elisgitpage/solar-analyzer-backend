@@ -1,4 +1,5 @@
-//const fs = require('fs');
+import { createWriteStream } from "fs";
+import https from "https";
 import got from "got";
 import jsdom from "jsdom";
 import { exec } from "child_process";
@@ -78,7 +79,7 @@ got(solargisUrl)
       //   console.log(option);
       // })
     }
-
+    // allOptions.forEach((opt) => console.log(opt));
     main();
   })
   .catch((err) => {
@@ -88,12 +89,40 @@ got(solargisUrl)
 function main() {
   console.log(allOptions.length);
   console.log(allOptions[0].url);
-  var url = allOptions[0].url;
-  var start =
-    process.platform == "darwin"
-      ? "open"
-      : process.platform == "win32"
-      ? "start"
-      : "xdg-open";
-  exec(start + " " + url);
+  // var url = allOptions[0].url;
+  // var start =
+  //   process.platform == "darwin"
+  //     ? "open"
+  //     : process.platform == "win32"
+  //     ? "start"
+  //     : "xdg-open";
+  // exec(start + " " + url);
+
+  // This sends JSON list of all region and country options in response to a GET request at /options
+  app.get("/options", (req, res) => {
+    res.json(allOptions.map((option) => option.name));
+  });
+
+  getFrance();
+}
+
+function getFrance() {
+  let franceUrl =
+    "https://solargis.com/file?url=download/France/France_GHI_mid-size-map_156x200mm-300dpi_v20200903.png&amp;bucket=globalsolaratlas.info";
+  const file = createWriteStream("file.jpg");
+  const request = https.get(franceUrl, (response) => {
+    response.pipe(file);
+    // after download completed close filestream
+    file.on("finish", () => {
+      file.close();
+      console.log("Download Completed");
+    });
+  });
+  // got(franceUrl).then((response) => {
+  //   const dom = new JSDOM(response.body);
+  //   const dropdowns =
+  //     dom.window.document.getElementsByClassName("js-map-preview");
+  //   const GHIMedPic = dropdowns[4];
+  //   const result = GHIMedPic.click();
+  // });
 }
