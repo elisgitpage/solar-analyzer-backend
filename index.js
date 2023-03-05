@@ -7,11 +7,13 @@ import express from "express";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import cors from "cors";
+import solarGISExtractor from "./puppetSolargis.js";
 const { JSDOM } = jsdom;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 let app = express();
+const solarGis = new solarGISExtractor();
 
 console.log(__dirname);
 
@@ -29,6 +31,16 @@ app.get("/", (req, res) => {
 // This sends JSON in response to a GET request at /api
 app.get("/api", (req, res) => {
   res.json({ msg: "Hello, from the server!" });
+});
+
+app.get("/api/options", (req, res) => {
+  res.json(allOptions.map((option) => option.name));
+});
+
+app.get("/api/map/:name", (req, res) => {
+  solarGis.getMapFromSolarGIS(req.params.name).then((mapPath) => {
+    res.sendFile(mapPath);
+  });
 });
 
 // Sets the app to listen on Port 4001 and lets us know
@@ -98,12 +110,8 @@ function main() {
   //     : "xdg-open";
   // exec(start + " " + url);
 
-  // This sends JSON list of all region and country options in response to a GET request at /options
-  app.get("/options", (req, res) => {
-    res.json(allOptions.map((option) => option.name));
-  });
-
-  getFrance();
+  // This sends JSON list of all region and country options in response to a GET request at /options\
+  // getFrance();
 }
 
 function getFrance() {
