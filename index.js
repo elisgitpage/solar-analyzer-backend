@@ -38,9 +38,15 @@ app.get("/api/options", (req, res) => {
 });
 
 app.get("/api/map/:name", (req, res) => {
-  solarGis.getMapFromSolarGIS(req.params.name).then((mapPath) => {
-    res.sendFile(mapPath);
-  });
+  let mapName = req.params.name;
+  let mapFilename = solarGis.getMapFilename(mapName);
+  if (mapFilename !== "") {
+    res.sendFile(__dirname + "/images/" + mapFilename);
+  } else {
+    solarGis.getMapFromSolarGIS(req.params.name).then((mapFilename) => {
+      res.sendFile(__dirname + "/images/" + mapFilename);
+    });
+  }
 });
 
 // Sets the app to listen on Port 4001 and lets us know

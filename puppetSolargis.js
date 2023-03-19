@@ -7,25 +7,27 @@ export default class solarGISExtractor {
     "C:\\Users\\eabid\\Documents\\Programming projects\\SolarGIS-Analyzer-Project\\SolarGIS-Analyzer-Backend\\solar-analyzer-backend\\images";
 
   async getMapFromSolarGIS(mapName) {
-    const downloadPath = path.resolve("./Documents/SolargisDownloads");
+    // const downloadPath = path.resolve("./Documents/SolargisDownloads");
     const browser = await puppeteer.launch({
       headless: true,
     });
     const page = await browser.newPage();
 
-    await page.goto("https://solargis.com/maps-and-gis-data/download/usa");
+    await page.goto(
+      "https://solargis.com/maps-and-gis-data/download/" + mapName
+    );
 
     const client = await page.target().createCDPSession();
     await client.send("Page.setDownloadBehavior", {
       behavior: "allow",
-      downloadPath: downloadPath,
+      downloadPath: this.downloadPath,
     });
 
-    const href =
-      "/file?url=download/France/France_GHI_mid-size-map_156x200mm-300dpi_v20200903.png&bucket=globalsolaratlas.info";
-    let aGHI = await page.$(
-      'a[href="/file?url=download/France/France_GHI_mid-size-map_156x200mm-300dpi_v20200903.png&bucket=globalsolaratlas.info"]'
-    );
+    // const href =
+    //   "/file?url=download/France/France_GHI_mid-size-map_156x200mm-300dpi_v20200903.png&bucket=globalsolaratlas.info";
+    // let aGHI = await page.$(
+    //   'a[href="/file?url=download/France/France_GHI_mid-size-map_156x200mm-300dpi_v20200903.png&bucket=globalsolaratlas.info"]'
+    // );
     let mapDownloadLinks = await page.$$(".js-map-preview");
     console.log(mapDownloadLinks);
     let GHI_MED_MAP_LINK_NUM = 2;
@@ -39,22 +41,22 @@ export default class solarGISExtractor {
     console.log("Link click results awaited");
     await browser.close();
 
-    return this.getFilePath(mapName);
+    return this.getMapFilename(mapName);
   }
 
-  getFilePath(mapName) {
+  getMapFilename(mapName) {
     let files = fs.readdirSync(this.downloadPath);
-    let selectedFile;
+    let mapFilename = "";
     files.forEach((fileName) => {
       if (
         fileName.toLowerCase().startsWith(mapName) &&
         !fileName.endsWith("crdownload")
       ) {
-        selectedFile = fileName;
+        mapFilename = fileName;
       }
     });
 
-    return this.downloadPath + selectedFile;
+    return mapFilename;
   }
 
   sleep(ms) {
